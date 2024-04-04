@@ -18,10 +18,18 @@ public class PlacementSystem : MonoBehaviour
     [SerializeField]
     private GameObject gridVisualization;
 
+    private GridData gridData;
+
+    private Renderer previewRenderer;
+
+    private List<GameObject> placedGameObjects = new();
+
 
     private void Start()
     {
         StopPlacement();
+        gridData = new GridData();
+        previewRenderer = cellIndicator.GetComponentInChildren<Renderer>();
     }
 
 
@@ -49,9 +57,28 @@ public class PlacementSystem : MonoBehaviour
         }
         Vector3 mousePosition = inputManager.GetSelectedMapPosition();
         Vector3Int gridPosition = grid.WorldToCell(mousePosition);
+
+        bool placementValidity = CheckPlacementValidity(gridPosition, selectedObjectIndex);
+        if (!placementValidity)
+        {
+            return;
+        }
+
         GameObject newObject = Instantiate(database.objectsData[selectedObjectIndex].Prefab);
         newObject.transform.position = grid.CellToWorld(gridPosition);
+        placedGameObjects.Add(newObject);
+
+        gridData.AddObjectAt(gridPosition,
+            database.objectsData[selectedObjectIndex].Size,
+            database.objectsData[selectedObjectIndex].ID,
+            placedGameObjects.Count - 1);
     }
+
+    private bool CheckPlacementValidity(Vector3Int gridPosition, int selectedObjectIndex)
+    {
+        return gridData.CanPlaceObjectAt(gridPosition, database.objectsData[selectedObjectIndex].Size);
+    }
+
     private void StopPlacement()
     {
         selectedObjectIndex = -1;
@@ -63,14 +90,18 @@ public class PlacementSystem : MonoBehaviour
 
     void Update()
     {
-        if(selectedObjectIndex < 0)
+        if (selectedObjectIndex < 0)
         {
             return;
         }
         Vector3 mousePosition = inputManager.GetSelectedMapPosition();
         Vector3Int gridPosition = grid.WorldToCell(mousePosition);
+
+        bool placementValidity = CheckPlacementValidity(gridPosition, selectedObjectIndex);
+        previewRenderer.material.color = placementValidity ? Color.white : Color.red;
+
         mouseIndicator.transform.position = mousePosition;
-        
+
         cellIndicator.transform.position = grid.CellToWorld(gridPosition);
     }
 }
