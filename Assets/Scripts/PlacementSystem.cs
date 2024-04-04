@@ -1,8 +1,9 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 public class PlacementSystem : MonoBehaviour
 {
     [SerializeField]
@@ -17,21 +18,54 @@ public class PlacementSystem : MonoBehaviour
 
     [SerializeField]
     private GameObject gridVisualization;
-
-    private GridData gridData;
+    [SerializeField] public GridData gridData;
 
     private Renderer previewRenderer;
-
-    private List<GameObject> placedGameObjects = new();
-
 
     private void Start()
     {
         StopPlacement();
-        gridData = new GridData();
+        AssertGridData();
         previewRenderer = cellIndicator.GetComponentInChildren<Renderer>();
     }
 
+    void Update()
+    {
+        if (selectedObjectIndex < 0)
+        {
+            return;
+        }
+        Vector3 mousePosition = inputManager.GetSelectedMapPosition();
+        Vector3Int gridPosition = grid.WorldToCell(mousePosition);
+
+        bool placementValidity = CheckPlacementValidity(gridPosition, selectedObjectIndex);
+        previewRenderer.material.color = placementValidity ? Color.white : Color.red;
+
+        mouseIndicator.transform.position = mousePosition;
+
+        cellIndicator.transform.position = grid.CellToWorld(gridPosition);
+    }
+
+    public void ClearPlacedObjects()
+    {
+#if UNITY_EDITOR
+        Undo.RegisterCompleteObjectUndo(this, "Clear");
+        gridData.persistentPlacedObjectsData.placedObjects.Clear();
+#endif
+    }
+
+    public void AssertGridData()
+    {
+#if UNITY_EDITOR
+
+#endif
+        if (gridData == null)
+        {
+            gridData = new GridData();
+        }
+        Dictionary<Vector3, PlacementData> runTimePlacedObjects = gridData.GetRuntimeDictionary();
+        Debug.Log(runTimePlacedObjects.Count);
+    }
 
     public void StartPlacement(int ID)
     {
@@ -63,15 +97,42 @@ public class PlacementSystem : MonoBehaviour
         {
             return;
         }
+        InstantiateCellAtGridPosition(true, gridPosition, database, selectedObjectIndex, grid, gridData, ref gridData.persistentPlacedObjectsData.placedObjects);
+    }
 
+
+    public static void InstantiateCellAtGridPosition(Vector3 gridPosition, PlacementSystem placementSystem, int selectedIndex)
+    {
+#if UNITY_EDITOR
+        Undo.RegisterCompleteObjectUndo(placementSystem, "InstantiateNewObject");
+#endif
+        Vector3Int aGridPosition = placementSystem.grid.WorldToCell(gridPosition);
+        InstantiateCellAtGridPosition(false, aGridPosition, placementSystem.database, selectedIndex, placementSystem.grid, placementSystem.gridData, ref placementSystem.gridData.persistentPlacedObjectsData.placedObjects);
+    }
+    public static void InstantiateCellAtGridPosition(bool runtime, Vector3Int gridPosition, ObjectsDatabaseSO database, int selectedObjectIndex, Grid grid, GridData gridData, ref List<KeyValuePair<Vector3, PlacementData>> placedGameObjects)
+    {
         GameObject newObject = Instantiate(database.objectsData[selectedObjectIndex].Prefab);
         newObject.transform.position = grid.CellToWorld(gridPosition);
-        placedGameObjects.Add(newObject);
+        if (runtime)
+        {
+            //placedGameObjects.Add(newObject);
 
-        gridData.AddObjectAt(gridPosition,
-            database.objectsData[selectedObjectIndex].Size,
-            database.objectsData[selectedObjectIndex].ID,
-            placedGameObjects.Count - 1);
+            gridData.AddObjectAtRuntime(gridPosition,
+                database.objectsData[selectedObjectIndex].Size,
+                database.objectsData[selectedObjectIndex].ID,
+                placedGameObjects.Count - 1);
+        }
+        else
+        {
+            gridData.AddObjectAt(gridPosition,
+                database.objectsData[selectedObjectIndex].Size,
+                database.objectsData[selectedObjectIndex].ID,
+                placedGameObjects.Count - 1);
+        }
+#if UNITY_EDITOR
+        Undo.RegisterCreatedObjectUndo(newObject, "InstantiateNewObject");
+#endif
+
     }
 
     private bool CheckPlacementValidity(Vector3Int gridPosition, int selectedObjectIndex)
@@ -88,20 +149,14 @@ public class PlacementSystem : MonoBehaviour
         inputManager.OnExit -= StopPlacement;
     }
 
-    void Update()
+    public GridData GetGridData()
     {
-        if (selectedObjectIndex < 0)
-        {
-            return;
-        }
-        Vector3 mousePosition = inputManager.GetSelectedMapPosition();
-        Vector3Int gridPosition = grid.WorldToCell(mousePosition);
-
-        bool placementValidity = CheckPlacementValidity(gridPosition, selectedObjectIndex);
-        previewRenderer.material.color = placementValidity ? Color.white : Color.red;
-
-        mouseIndicator.transform.position = mousePosition;
-
-        cellIndicator.transform.position = grid.CellToWorld(gridPosition);
+        return gridData;
     }
+
+    public void SetGridData(GridData d)
+    {
+        gridData = d;
+    }
+
 }
