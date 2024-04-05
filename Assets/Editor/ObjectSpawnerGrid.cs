@@ -1,5 +1,4 @@
-using System;
-using System.Collections;
+using System.IO;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -9,7 +8,6 @@ public class ObjectSpawnerGrid : EditorWindow
     int selGridInt = -1;
     LayerMask placementLayermask;
     ObjectsDatabaseSO database;
-    public string[] selStrings1 = new string[] { "radio1", "radio2", "radio3" };
     PlacementSystem placementSystem;
     bool useDataBase = false;
 
@@ -36,6 +34,10 @@ public class ObjectSpawnerGrid : EditorWindow
         {
             placementSystem = FindObjectOfType<PlacementSystem>();
             useDataBase = true;
+        }
+        if (GUILayout.Button("Load Grid"))
+        {
+            placementSystem.gridData.persistentPlacedObjectsData = SaveLoadGrid.LoadGrid();
         }
 
         if (useDataBase)
@@ -118,5 +120,12 @@ public class ObjectSpawnerGrid : EditorWindow
             Debug.Log("You choose " + selStrings[selGridInt]);
         }
         GUILayout.EndVertical();
+    }
+
+
+    public void SaveGrid(List<KeyValuePair<Vector3, PlacementData>> placedObjects)
+    {
+        string jsonText = JsonUtility.ToJson(placedObjects);
+        File.WriteAllText(Path.Combine(Application.dataPath, "gridLayout"), jsonText);
     }
 }

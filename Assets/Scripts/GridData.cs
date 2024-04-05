@@ -95,6 +95,7 @@ public class GridData
                 persistentPlacedObjectsData.placedObjects.Add(new KeyValuePair<Vector3, PlacementData>(pos, data));
             }
         }
+        SaveLoadGrid.SaveGrid(persistentPlacedObjectsData);
     }
 
     public static int GetIndexOf(List<KeyValuePair<Vector3, PlacementData>> keyValuePairs, Vector3Int key)
