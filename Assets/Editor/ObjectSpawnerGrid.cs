@@ -34,10 +34,16 @@ public class ObjectSpawnerGrid : EditorWindow
         {
             placementSystem = FindObjectOfType<PlacementSystem>();
             useDataBase = true;
-        }
-        if (GUILayout.Button("Load Grid"))
-        {
-            placementSystem.gridData.persistentPlacedObjectsData = SaveLoadGrid.LoadGrid();
+            List<CellData> previousObjectsList = new List<CellData>(FindObjectsByType<CellData>(FindObjectsSortMode.None));
+            if (GridData.persistentPlacedObjectsData != null)
+            {
+                foreach (CellData cell in previousObjectsList)
+                {
+                    KeyValuePair<Vector3, CellData> keyvalue = new KeyValuePair<Vector3, CellData>(cell.occupiedPositions[0], cell);
+                    GridData.persistentPlacedObjectsData.placedObjects.Add(keyvalue);
+                }
+            }
+            
         }
 
         if (useDataBase)
@@ -123,7 +129,7 @@ public class ObjectSpawnerGrid : EditorWindow
     }
 
 
-    public void SaveGrid(List<KeyValuePair<Vector3, PlacementData>> placedObjects)
+    public void SaveGrid(List<KeyValuePair<Vector3, CellData>> placedObjects)
     {
         string jsonText = JsonUtility.ToJson(placedObjects);
         File.WriteAllText(Path.Combine(Application.dataPath, "gridLayout"), jsonText);

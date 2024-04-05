@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7016949829460451689}
+  - component: {fileID: 8522849418165954511}
   m_Layer: 6
   m_Name: WaterParent
   m_TagString: Untagged
@@ -32,6 +33,19 @@ Transform:
   - {fileID: 7174384087735802978}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8522849418165954511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 240930474576384872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55238dfba9c87ad4a90a9acfd29062ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  occupiedPositions: []
 --- !u!1 &8896444896767701802
 GameObject:
   m_ObjectHideFlags: 0

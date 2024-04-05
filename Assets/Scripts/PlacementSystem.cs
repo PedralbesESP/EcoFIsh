@@ -63,7 +63,7 @@ public class PlacementSystem : MonoBehaviour
         {
             gridData = new GridData();
         }
-        Dictionary<Vector3, PlacementData> runTimePlacedObjects = gridData.GetRuntimeDictionary();
+        Dictionary<Vector3, CellData> runTimePlacedObjects = gridData.GetRuntimeDictionary();
         Debug.Log(runTimePlacedObjects.Count);
     }
 
@@ -109,7 +109,7 @@ public class PlacementSystem : MonoBehaviour
         Vector3Int aGridPosition = placementSystem.grid.WorldToCell(gridPosition);
         InstantiateCellAtGridPosition(false, aGridPosition, placementSystem.database, selectedIndex, placementSystem.grid, placementSystem.gridData, ref placementSystem.gridData.persistentPlacedObjectsData.placedObjects);
     }
-    public static void InstantiateCellAtGridPosition(bool runtime, Vector3Int gridPosition, ObjectsDatabaseSO database, int selectedObjectIndex, Grid grid, GridData gridData, ref List<KeyValuePair<Vector3, PlacementData>> placedGameObjects)
+    public static void InstantiateCellAtGridPosition(bool runtime, Vector3Int gridPosition, ObjectsDatabaseSO database, int selectedObjectIndex, Grid grid, GridData gridData, ref List<KeyValuePair<Vector3, CellData>> placedGameObjects)
     {
         GameObject newObject = Instantiate(database.objectsData[selectedObjectIndex].Prefab);
         newObject.transform.position = grid.CellToWorld(gridPosition);

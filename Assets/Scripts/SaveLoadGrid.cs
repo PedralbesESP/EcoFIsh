@@ -1,14 +1,16 @@
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
 
 public static class SaveLoadGrid
 {
     const string FILENAME = "gridLayout";
     public static void SaveGrid(PersistentPlacedObjectsData objectList)
     {
-        
-        string jsonText = JsonUtility.ToJson(objectList);
+
+        //string jsonText = JsonUtility.ToJson(objectList);
+        string jsonText = JsonConvert.SerializeObject(objectList);
         File.WriteAllText(Path.Combine(Application.dataPath, FILENAME), jsonText);
         Debug.Log("Saved");
     }
