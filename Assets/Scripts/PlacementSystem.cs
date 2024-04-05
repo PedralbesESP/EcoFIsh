@@ -113,13 +113,8 @@ public class PlacementSystem : MonoBehaviour
     {
         GameObject newObject = Instantiate(database.objectsData[selectedObjectIndex].Prefab);
         newObject.transform.position = grid.CellToWorld(gridPosition);
-        newObject.gameObject.GetComponentInChildren<CheckOverlap>().DestroyOtherIfOverlap();
-        //Collider[] hitColliders = Physics.OverlapBox(newObject.transform.position, newObject.transform.localScale, Quaternion.identity, 6);
-        //if (hitColliders.Length > 0)
-        {
-            //  Debug.Log("Destroy: "+ hitColliders[0].gameObject.name);
-            // Destroy(hitColliders[0].gameObject);
-        }
+
+//        newObject.gameObject.GetComponentInChildren<CheckOverlap>().DestroyOtherIfOverlap();
         if (runtime)
         {
             //placedGameObjects.Add(newObject);
@@ -127,14 +122,16 @@ public class PlacementSystem : MonoBehaviour
             gridData.AddObjectAtRuntime(gridPosition,
                 database.objectsData[selectedObjectIndex].Size,
                 database.objectsData[selectedObjectIndex].ID,
-                placedGameObjects.Count - 1);
+                placedGameObjects.Count - 1,
+                newObject);
         }
         else
         {
             gridData.AddObjectAt(gridPosition,
                 database.objectsData[selectedObjectIndex].Size,
                 database.objectsData[selectedObjectIndex].ID,
-                placedGameObjects.Count - 1);
+                placedGameObjects.Count - 1,
+                newObject);
         }
 #if UNITY_EDITOR
         Undo.RegisterCreatedObjectUndo(newObject, "InstantiateNewObject");

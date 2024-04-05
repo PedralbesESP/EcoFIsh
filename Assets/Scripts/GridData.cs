@@ -29,6 +29,7 @@ public class GridData
     [SerializeField]
     public PersistentPlacedObjectsData persistentPlacedObjectsData;
     Dictionary<Vector3, PlacementData> runTimePlacedObjects = null;
+    
     public Dictionary<Vector3, PlacementData> GetRuntimeDictionary()
     {
         if (runTimePlacedObjects == null)
@@ -44,10 +45,11 @@ public class GridData
     public void AddObjectAtRuntime(Vector3Int gridPosition,
                             Vector2Int objectSize,
                             int ID,
-                            int placedObjectIndex)
+                            int placedObjectIndex,
+                            GameObject gameObject)
     {
         List<Vector3Int> positionToOccupy = CalculatePositions(gridPosition, objectSize);
-        PlacementData data = new PlacementData(positionToOccupy, ID, placedObjectIndex);
+        PlacementData data = new PlacementData(positionToOccupy, ID, placedObjectIndex, gameObject);
         foreach (var pos in positionToOccupy)
         {
             if (GetRuntimeDictionary().ContainsKey(pos))
@@ -65,19 +67,27 @@ public class GridData
     public void AddObjectAt(Vector3Int gridPosition,
                         Vector2Int objectSize,
                         int ID,
-                        int placedObjectIndex)
+                        int placedObjectIndex,
+                        GameObject gameObject)
     {
         List<Vector3Int> positionToOccupy = CalculatePositions(gridPosition, objectSize);
-        PlacementData data = new PlacementData(positionToOccupy, ID, placedObjectIndex);
+        PlacementData data = new PlacementData(positionToOccupy, ID, placedObjectIndex, gameObject);
         foreach (var pos in positionToOccupy)
         {
             if (KeyValuePairArrayContainsKey(persistentPlacedObjectsData.placedObjects, pos))
             {
                 //int index = GetIndexOf(placedObjects, pos);
                 //placedObjects[index].Value = data;
-                persistentPlacedObjectsData.placedObjects.RemoveAt(GetIndexOf(persistentPlacedObjectsData.placedObjects, pos));
+                GameObject go = persistentPlacedObjectsData.placedObjects[GetIndexOf(persistentPlacedObjectsData.placedObjects, pos)].Value.SavedGameObject;
+                
+                UnityEngine.Object.DestroyImmediate(go);
+                
+                persistentPlacedObjectsData.placedObjects[GetIndexOf(persistentPlacedObjectsData.placedObjects, pos)].Value.SavedGameObject = gameObject;
+                
+                //persistentPlacedObjectsData.placedObjects.RemoveAt(GetIndexOf(persistentPlacedObjectsData.placedObjects, pos));
 
-                persistentPlacedObjectsData.placedObjects.Add(new KeyValuePair<Vector3, PlacementData>(pos, data));
+                //persistentPlacedObjectsData.placedObjects.Add(new KeyValuePair<Vector3, PlacementData>(pos, data));
+
                 //throw new Exception($"Dictionary already contains cell position {pos}");
             }
             else
@@ -165,10 +175,13 @@ public class PlacementData
     [SerializeField] public int ID { get; private set; }
     [SerializeField] public int PlacedObjectIndex { get; private set; }
 
-    public PlacementData(List<Vector3Int> occupiedPositions, int iD, int placedObjectIndex)
+    [SerializeField] public GameObject SavedGameObject;
+
+    public PlacementData(List<Vector3Int> occupiedPositions, int iD, int placedObjectIndex, GameObject GameObjectToSave)
     {
         this.occupiedPositions = occupiedPositions;
         ID = iD;
         PlacedObjectIndex = placedObjectIndex;
+        SavedGameObject = GameObjectToSave;
     }
 }
