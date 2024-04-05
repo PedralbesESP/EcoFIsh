@@ -113,6 +113,13 @@ public class PlacementSystem : MonoBehaviour
     {
         GameObject newObject = Instantiate(database.objectsData[selectedObjectIndex].Prefab);
         newObject.transform.position = grid.CellToWorld(gridPosition);
+        newObject.gameObject.GetComponentInChildren<CheckOverlap>().DestroyOtherIfOverlap();
+        //Collider[] hitColliders = Physics.OverlapBox(newObject.transform.position, newObject.transform.localScale, Quaternion.identity, 6);
+        //if (hitColliders.Length > 0)
+        {
+            //  Debug.Log("Destroy: "+ hitColliders[0].gameObject.name);
+            // Destroy(hitColliders[0].gameObject);
+        }
         if (runtime)
         {
             //placedGameObjects.Add(newObject);

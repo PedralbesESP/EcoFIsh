@@ -104,13 +104,11 @@ public class ObjectSpawnerGrid : EditorWindow
 
     void UseDatabase()
     {
-        Debug.Log("Llega " + database.objectsData.Count);
         GUILayout.BeginVertical("Box");
         string[] selStrings = new string[database.objectsData.Count];
         for (int i = 0; i < database.objectsData.Count; i++)
         {
             selStrings[i] = database.objectsData[i].Name;
-            Debug.Log(selStrings[i]);
         }
 
         selGridInt = GUILayout.SelectionGrid(selGridInt, selStrings, 1);

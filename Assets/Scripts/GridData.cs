@@ -75,11 +75,14 @@ public class GridData
             {
                 //int index = GetIndexOf(placedObjects, pos);
                 //placedObjects[index].Value = data;
-                throw new Exception($"Dictionary already contains cell position {pos}");
+                persistentPlacedObjectsData.placedObjects.RemoveAt(GetIndexOf(persistentPlacedObjectsData.placedObjects, pos));
+
+                persistentPlacedObjectsData.placedObjects.Add(new KeyValuePair<Vector3, PlacementData>(pos, data));
+                //throw new Exception($"Dictionary already contains cell position {pos}");
             }
             else
             {
-                persistentPlacedObjectsData.placedObjects.Add(new KeyValuePair<Vector3, PlacementData>(pos,data));
+                persistentPlacedObjectsData.placedObjects.Add(new KeyValuePair<Vector3, PlacementData>(pos, data));
             }
         }
     }
