@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using System.Linq;
 
 [System.Serializable]
 public class KeyValuePair<K, V>
@@ -17,12 +18,6 @@ public class KeyValuePair<K, V>
     public V Value { get; set; }
 }
 
-[CreateAssetMenu()]
-public class PersistentPlacedObjectsData : ScriptableObject
-{
-    [SerializeField] public List<KeyValuePair<Vector3, CellData>> placedObjects;
-
-}
 
 
 public class GridData : MonoBehaviour
@@ -63,6 +58,7 @@ public class GridData : MonoBehaviour
             }
             else
             {
+                data.SetGrid(this);
                 GetRuntimeDictionary().Add(pos, data);
             }
         }
@@ -92,12 +88,14 @@ public class GridData : MonoBehaviour
 
                 persistentPlacedObjectsData.placedObjects.RemoveAt(GetIndexOf(persistentPlacedObjectsData.placedObjects, pos));
                 persistentPlacedObjectsData.placedObjects.Add(new KeyValuePair<Vector3, CellData>(pos, data));
-
+                data.SetGrid(this);
                 //throw new Exception($"Dictionary already contains cell position {pos}");
                 UnityEngine.Object.DestroyImmediate(go);
             }
             else
             {
+                
+                data.SetGrid(this);
                 persistentPlacedObjectsData.placedObjects.Add(new KeyValuePair<Vector3, CellData>(pos, data));
             }
         }
@@ -174,6 +172,63 @@ public class GridData : MonoBehaviour
         return true;
     }
 
+    public void cleanArea(CellData cell, int cleanArea)
+    {
+        List<Vector2Int> neighborList = GetNeighborsWithRange(new Vector2Int(cell.occupiedPositions[0].x, cell.occupiedPositions[0].y), cleanArea);
+
+        for (int i = 0; i < neighborList.Count; i++)
+        {
+            var foundCell = persistentPlacedObjectsData.placedObjects.FirstOrDefault(pObject => neighborList.Contains(new Vector2Int((int)pObject.Key.x, (int)pObject.Key.y)));
+            if (foundCell != null)
+            {
+                if (foundCell.Value is BuildingCell)
+                {
+                    foundCell.Value.GetComponent<BuildingCell>().Polluted = false;
+                }
+            }
+        }
+    }
+
+    public List<Vector2Int> GetNeighborsWithRange(Vector2Int cellPos, int range)
+    {
+        List<Vector2Int> neighbors = new List<Vector2Int>();
+
+        for (int x = -range; x <= range; x++)
+        {
+            for (int y = -range; y <= range; y++)
+            {
+                // Skip the center cell (current cell position)
+                if (x == 0 && y == 0)
+                    continue;
+
+                // Calculate the neighbor's position
+                Vector2Int neighborPos = new Vector2Int(cellPos.x + x, cellPos.y + y);
+
+                // Add the neighbor if it's within the range
+                if (Vector2Int.Distance(cellPos, neighborPos) <= range)
+                {
+                    neighbors.Add(neighborPos);
+                }
+            }
+        }
+
+        return neighbors;
+    }
+
+    public void printData()
+    {
+        foreach (var itemsRunTime in runTimePlacedObjects)
+        {
+            Debug.Log("Key: " + itemsRunTime.Key.ToString() + " Value: " + itemsRunTime.Value.ToString());
+        }
+        for (int i = 0; i < persistentPlacedObjectsData.placedObjects.Count; i++)
+        {
+
+            Debug.Log("Item pos: " + persistentPlacedObjectsData.placedObjects[i].Key.ToString() + "  Name: " + persistentPlacedObjectsData.placedObjects[i].Value.name + " Data type: " + persistentPlacedObjectsData.placedObjects[i].Value.GetType().ToString() + "" +
+                " " + persistentPlacedObjectsData.placedObjects[i].Value.occupiedPositions);
+
+        }
+    }
 }
 
 

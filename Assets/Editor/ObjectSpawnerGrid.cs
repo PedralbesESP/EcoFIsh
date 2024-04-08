@@ -41,7 +41,9 @@ public class ObjectSpawnerGrid : EditorWindow
                 foreach (CellData cell in previousObjectsList)
                 {
                     KeyValuePair<Vector3, CellData> keyvalue = new KeyValuePair<Vector3, CellData>(cell.occupiedPositions[0], cell);
+                    gridData.persistentPlacedObjectsData.modifyHola(3);
                     gridData.persistentPlacedObjectsData.placedObjects.Add(keyvalue);
+                    cell.SetGrid(gridData);
                 }
             }
             else

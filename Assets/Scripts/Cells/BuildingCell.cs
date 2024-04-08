@@ -1,18 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
-public class BuildingCell : CellData
+public abstract class BuildingCell : CellData
 {
-    // Start is called before the first frame update
-    void Start()
+    public bool Polluted
     {
-        
+        get => polluted; set
+        {
+            pollutionChanged();
+            polluted = value;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    [SerializeField] protected bool polluted;
+    protected virtual void pollutionChanged() { }
+
+    protected void OnDrawGizmos()
     {
-        
+        if (polluted)
+        {
+            Gizmos.color = Color.red;
+        }
+        else
+        {
+            Gizmos.color = Color.green;
+        }
+        Gizmos.DrawSphere(transform.position, 1);
     }
 }

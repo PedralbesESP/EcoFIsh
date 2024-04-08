@@ -8,8 +8,7 @@ public class CellData : MonoBehaviour
     [SerializeField] public List<Vector3Int> occupiedPositions;
     [SerializeField] public int ID { get; private set; }
     [SerializeField] public int PlacedObjectIndex { get; private set; }
-
-    [SerializeField] public bool polluted;
+    protected GridData gridData;
 
 
     public void InitCellData(List<Vector3Int> occupiedPositions, int iD, int placedObjectIndex)
@@ -23,6 +22,10 @@ public class CellData : MonoBehaviour
         PlacedObjectIndex = placedObjectIndex;
     }
 
+    public void SetGrid(GridData grid)
+    {
+        gridData = grid;
+    }
 }
 
 
