@@ -6,11 +6,11 @@ using UnityEngine;
 public class CellData : MonoBehaviour
 {
     [SerializeField] public List<Vector3Int> occupiedPositions;
-
     [SerializeField] public int ID { get; private set; }
     [SerializeField] public int PlacedObjectIndex { get; private set; }
 
-    [SerializeField] private bool polluted;
+    [SerializeField] public bool polluted;
+
 
     public void InitCellData(List<Vector3Int> occupiedPositions, int iD, int placedObjectIndex)
     {
@@ -22,6 +22,7 @@ public class CellData : MonoBehaviour
         ID = iD;
         PlacedObjectIndex = placedObjectIndex;
     }
+
 }
 
 
