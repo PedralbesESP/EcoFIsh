@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 [System.Serializable]
@@ -23,12 +24,12 @@ public class PersistentPlacedObjectsData : ScriptableObject
 
 }
 
-[System.Serializable]
-public class GridData
+
+public class GridData : MonoBehaviour
 {
     [SerializeField]
-    public static PersistentPlacedObjectsData persistentPlacedObjectsData;
-    Dictionary<Vector3, CellData> runTimePlacedObjects = null;
+    public PersistentPlacedObjectsData persistentPlacedObjectsData;
+    public Dictionary<Vector3, CellData> runTimePlacedObjects = null;
 
     public Dictionary<Vector3, CellData> GetRuntimeDictionary()
     {
@@ -49,7 +50,7 @@ public class GridData
                             GameObject gameObject)
     {
         List<Vector3Int> positionToOccupy = CalculatePositions(gridPosition, objectSize);
-        
+
         CellData data = gameObject.GetComponent<CellData>();
         data.InitCellData(positionToOccupy, ID, placedObjectIndex);
         //CellData data = new CellData(positionToOccupy, ID, placedObjectIndex);
@@ -85,21 +86,22 @@ public class GridData
                 //placedObjects[index].Value = data;
                 GameObject go = persistentPlacedObjectsData.placedObjects[GetIndexOf(persistentPlacedObjectsData.placedObjects, pos)].Value.gameObject;
 
-                UnityEngine.Object.DestroyImmediate(go);
-                
+
+
                 //persistentPlacedObjectsData.placedObjects[GetIndexOf(persistentPlacedObjectsData.placedObjects, pos)].Value.gameObject = gameObject;
 
                 persistentPlacedObjectsData.placedObjects.RemoveAt(GetIndexOf(persistentPlacedObjectsData.placedObjects, pos));
                 persistentPlacedObjectsData.placedObjects.Add(new KeyValuePair<Vector3, CellData>(pos, data));
 
                 //throw new Exception($"Dictionary already contains cell position {pos}");
+                UnityEngine.Object.DestroyImmediate(go);
             }
             else
             {
                 persistentPlacedObjectsData.placedObjects.Add(new KeyValuePair<Vector3, CellData>(pos, data));
             }
         }
-        
+
         //SaveLoadGrid.SaveGrid(persistentPlacedObjectsData);
     }
 
@@ -171,6 +173,7 @@ public class GridData
         }
         return true;
     }
+
 }
 
 

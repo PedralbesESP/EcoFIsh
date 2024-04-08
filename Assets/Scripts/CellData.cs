@@ -10,6 +10,8 @@ public class CellData : MonoBehaviour
     [SerializeField] public int ID { get; private set; }
     [SerializeField] public int PlacedObjectIndex { get; private set; }
 
+    [SerializeField] private bool polluted;
+
     public void InitCellData(List<Vector3Int> occupiedPositions, int iD, int placedObjectIndex)
     {
         this.occupiedPositions = new List<Vector3Int>();

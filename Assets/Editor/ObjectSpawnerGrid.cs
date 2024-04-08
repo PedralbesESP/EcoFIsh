@@ -35,15 +35,20 @@ public class ObjectSpawnerGrid : EditorWindow
             placementSystem = FindObjectOfType<PlacementSystem>();
             useDataBase = true;
             List<CellData> previousObjectsList = new List<CellData>(FindObjectsByType<CellData>(FindObjectsSortMode.None));
-            if (GridData.persistentPlacedObjectsData != null)
+            GridData gridData = FindObjectOfType<GridData>();
+            if (gridData.persistentPlacedObjectsData.placedObjects.Count<=0)
             {
                 foreach (CellData cell in previousObjectsList)
                 {
                     KeyValuePair<Vector3, CellData> keyvalue = new KeyValuePair<Vector3, CellData>(cell.occupiedPositions[0], cell);
-                    GridData.persistentPlacedObjectsData.placedObjects.Add(keyvalue);
+                    gridData.persistentPlacedObjectsData.placedObjects.Add(keyvalue);
                 }
             }
-            
+            else
+            {
+                // gridData.persistentPlacedObjectsData = ScriptableObject.CreateInstance<PersistentPlacedObjectsData>();
+            }
+
         }
 
         if (useDataBase)
