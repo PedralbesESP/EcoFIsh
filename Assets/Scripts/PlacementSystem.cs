@@ -50,7 +50,8 @@ public class PlacementSystem : MonoBehaviour
     {
 #if UNITY_EDITOR
         Undo.RegisterCompleteObjectUndo(this, "Clear");
-        gridData.persistentPlacedObjectsData.placedObjects.Clear();
+        gridData.persistentPlacedObjectsData.placedObjectCellPositions.Clear();
+        gridData.persistentPlacedObjectsData.placedObjectCellDatas.Clear();
 #endif
     }
 
@@ -97,7 +98,7 @@ public class PlacementSystem : MonoBehaviour
         {
             return;
         }
-        InstantiateCellAtGridPosition(true, gridPosition, database, selectedObjectIndex, grid, gridData, ref gridData.persistentPlacedObjectsData.placedObjects);
+        InstantiateCellAtGridPosition(true, gridPosition, database, selectedObjectIndex, grid, gridData, ref gridData.persistentPlacedObjectsData.placedObjectCellPositions, ref gridData.persistentPlacedObjectsData.placedObjectCellDatas);
     }
 
 
@@ -107,9 +108,9 @@ public class PlacementSystem : MonoBehaviour
         Undo.RegisterCompleteObjectUndo(placementSystem, "InstantiateNewObject");
 #endif
         Vector3Int aGridPosition = placementSystem.grid.WorldToCell(gridPosition);
-        InstantiateCellAtGridPosition(false, aGridPosition, placementSystem.database, selectedIndex, placementSystem.grid, placementSystem.gridData, ref placementSystem.gridData.persistentPlacedObjectsData.placedObjects);
+        InstantiateCellAtGridPosition(false, aGridPosition, placementSystem.database, selectedIndex, placementSystem.grid, placementSystem.gridData, ref placementSystem.gridData.persistentPlacedObjectsData.placedObjectCellPositions, ref placementSystem.gridData.persistentPlacedObjectsData.placedObjectCellDatas);
     }
-    public static void InstantiateCellAtGridPosition(bool runtime, Vector3Int gridPosition, ObjectsDatabaseSO database, int selectedObjectIndex, Grid grid, GridData gridData, ref List<KeyValuePair<Vector3, CellData>> placedGameObjects)
+    public static void InstantiateCellAtGridPosition(bool runtime, Vector3Int gridPosition, ObjectsDatabaseSO database, int selectedObjectIndex, Grid grid, GridData gridData, ref List<Vector3> placedGameObjectPositions, ref List<GameObject> placedGameObjectCellDatas)
     {
         GameObject newObject = Instantiate(database.objectsData[selectedObjectIndex].Prefab);
         newObject.transform.position = grid.CellToWorld(gridPosition);
@@ -122,7 +123,7 @@ public class PlacementSystem : MonoBehaviour
             gridData.AddObjectAtRuntime(gridPosition,
                 database.objectsData[selectedObjectIndex].Size,
                 database.objectsData[selectedObjectIndex].ID,
-                placedGameObjects.Count - 1,
+                placedGameObjectPositions.Count - 1,
                 newObject);
         }
         else
@@ -130,7 +131,7 @@ public class PlacementSystem : MonoBehaviour
             gridData.AddObjectAt(gridPosition,
                 database.objectsData[selectedObjectIndex].Size,
                 database.objectsData[selectedObjectIndex].ID,
-                placedGameObjects.Count - 1,
+                placedGameObjectPositions.Count - 1,
                 newObject);
         }
 #if UNITY_EDITOR

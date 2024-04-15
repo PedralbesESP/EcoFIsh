@@ -31,9 +31,9 @@ public class GridData : MonoBehaviour
         if (runTimePlacedObjects == null)
         {
             runTimePlacedObjects = new Dictionary<Vector3, CellData>();
-            for (int i = 0; i < persistentPlacedObjectsData.placedObjects.Count; i++)
+            for (int i = 0; i < persistentPlacedObjectsData.placedObjectCellDatas.Count; i++)
             {
-                runTimePlacedObjects.Add(persistentPlacedObjectsData.placedObjects[i].Key, persistentPlacedObjectsData.placedObjects[i].Value);
+                runTimePlacedObjects.Add(persistentPlacedObjectsData.placedObjectCellPositions[i], persistentPlacedObjectsData.placedObjectCellDatas[i].GetComponent<CellData>());
             }
         }
         return runTimePlacedObjects;
@@ -64,6 +64,23 @@ public class GridData : MonoBehaviour
         }
     }
 
+    public int GetIndexOfVector2(Vector2Int vec, List<Vector3> vectorList)
+    {
+        Vector3 aVec = new Vector3(vec.x, vec.y, 0);
+        return GetIndexOfVector3(aVec, vectorList);
+    }
+    public int GetIndexOfVector3(Vector3 vec, List<Vector3> vectorList)
+    {
+        for (int i = 0; i < vectorList.Count; i++)
+        {
+            if (vectorList[i] == vec)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public void AddObjectAt(Vector3Int gridPosition,
                         Vector2Int objectSize,
                         int ID,
@@ -76,30 +93,36 @@ public class GridData : MonoBehaviour
         data.InitCellData(positionToOccupy, ID, placedObjectIndex);
         foreach (var pos in positionToOccupy)
         {
-            if (KeyValuePairArrayContainsKey(persistentPlacedObjectsData.placedObjects, pos))
+            if (persistentPlacedObjectsData.placedObjectCellPositions.Contains(pos))
             {
                 //int index = GetIndexOf(placedObjects, pos);
                 //placedObjects[index].Value = data;
-                GameObject go = persistentPlacedObjectsData.placedObjects[GetIndexOf(persistentPlacedObjectsData.placedObjects, pos)].Value.gameObject;
+                //GameObject go = persistentPlacedObjectsData.placedObjects[GetIndexOf(persistentPlacedObjectsData.placedObjects, pos)].Value.gameObject;
+                int index = GetIndexOfVector3(pos, persistentPlacedObjectsData.placedObjectCellPositions);
+                GameObject go = persistentPlacedObjectsData.placedObjectCellDatas[index].gameObject;
 
 
 
                 //persistentPlacedObjectsData.placedObjects[GetIndexOf(persistentPlacedObjectsData.placedObjects, pos)].Value.gameObject = gameObject;
 
-                persistentPlacedObjectsData.placedObjects.RemoveAt(GetIndexOf(persistentPlacedObjectsData.placedObjects, pos));
-                persistentPlacedObjectsData.placedObjects.Add(new KeyValuePair<Vector3, CellData>(pos, data));
+                persistentPlacedObjectsData.placedObjectCellPositions.RemoveAt(index);
+                persistentPlacedObjectsData.placedObjectCellDatas.RemoveAt(index);
+                persistentPlacedObjectsData.placedObjectCellPositions.Add(pos);
+                persistentPlacedObjectsData.placedObjectCellDatas.Add(data.gameObject);
                 data.SetGrid(this);
                 //throw new Exception($"Dictionary already contains cell position {pos}");
                 UnityEngine.Object.DestroyImmediate(go);
             }
             else
             {
-                
+
                 data.SetGrid(this);
-                persistentPlacedObjectsData.placedObjects.Add(new KeyValuePair<Vector3, CellData>(pos, data));
+                persistentPlacedObjectsData.placedObjectCellPositions.Add(pos);
+                persistentPlacedObjectsData.placedObjectCellDatas.Add(data.gameObject);
             }
         }
-
+        EditorUtility.SetDirty(persistentPlacedObjectsData);
+        AssetDatabase.SaveAssets();
         //SaveLoadGrid.SaveGrid(persistentPlacedObjectsData);
     }
 
@@ -178,12 +201,15 @@ public class GridData : MonoBehaviour
 
         for (int i = 0; i < neighborList.Count; i++)
         {
-            var foundCell = persistentPlacedObjectsData.placedObjects.FirstOrDefault(pObject => neighborList.Contains(new Vector2Int((int)pObject.Key.x, (int)pObject.Key.y)));
+            //KeyValuePair<Vector3, CellData> foundCell = persistentPlacedObjectsData.placedObjects.FirstOrDefault(pObject => neighborList.Contains(new Vector2Int((int)pObject.Key.x, (int)pObject.Key.y)));
+
+            CellData foundCell = persistentPlacedObjectsData.placedObjectCellDatas[GetIndexOfVector2(neighborList[i], persistentPlacedObjectsData.placedObjectCellPositions)].GetComponent<CellData>();
+
             if (foundCell != null)
             {
-                if (foundCell.Value is BuildingCell)
+                if (foundCell is BuildingCell)
                 {
-                    foundCell.Value.GetComponent<BuildingCell>().Polluted = false;
+                    foundCell.GetComponent<BuildingCell>().Polluted = false;
                 }
             }
         }
@@ -221,11 +247,11 @@ public class GridData : MonoBehaviour
         {
             Debug.Log("Key: " + itemsRunTime.Key.ToString() + " Value: " + itemsRunTime.Value.ToString());
         }
-        for (int i = 0; i < persistentPlacedObjectsData.placedObjects.Count; i++)
+        for (int i = 0; i < persistentPlacedObjectsData.placedObjectCellPositions.Count; i++)
         {
 
-            Debug.Log("Item pos: " + persistentPlacedObjectsData.placedObjects[i].Key.ToString() + "  Name: " + persistentPlacedObjectsData.placedObjects[i].Value.name + " Data type: " + persistentPlacedObjectsData.placedObjects[i].Value.GetType().ToString() + "" +
-                " " + persistentPlacedObjectsData.placedObjects[i].Value.occupiedPositions);
+            Debug.Log("Item pos: " + persistentPlacedObjectsData.placedObjectCellPositions[i].ToString() + "  Name: " + persistentPlacedObjectsData.placedObjectCellDatas[i].name + " Data type: " + persistentPlacedObjectsData.placedObjectCellDatas[i].GetType().ToString() + "" +
+                " " + persistentPlacedObjectsData.placedObjectCellDatas[i].GetComponent<CellData>().occupiedPositions);
 
         }
     }

@@ -25,6 +25,11 @@ public class ObjectSpawnerGrid : EditorWindow
         placementLayermask = EditorGUILayout.LayerField("Layer", placementLayermask);
         database = EditorGUILayout.ObjectField("Database", database, typeof(ObjectsDatabaseSO), true) as ObjectsDatabaseSO;
 
+        if (GUILayout.Button("Debug"))
+        {
+            GridData gridData = FindObjectOfType<GridData>();
+            gridData.persistentPlacedObjectsData.DebugValues();
+        }
         if (GUILayout.Button("Empty PlacedObject"))
         {
             placementSystem = FindObjectOfType<PlacementSystem>();
@@ -36,13 +41,14 @@ public class ObjectSpawnerGrid : EditorWindow
             useDataBase = true;
             List<CellData> previousObjectsList = new List<CellData>(FindObjectsByType<CellData>(FindObjectsSortMode.None));
             GridData gridData = FindObjectOfType<GridData>();
-            if (gridData.persistentPlacedObjectsData.placedObjects.Count<=0)
+            if (gridData.persistentPlacedObjectsData.placedObjectCellDatas.Count <= 0)
             {
                 foreach (CellData cell in previousObjectsList)
                 {
-                    KeyValuePair<Vector3, CellData> keyvalue = new KeyValuePair<Vector3, CellData>(cell.occupiedPositions[0], cell);
+                    //KeyValuePair<Vector3, CellData> keyvalue = new KeyValuePair<Vector3, CellData>(cell.occupiedPositions[0], cell);
                     gridData.persistentPlacedObjectsData.modifyHola(3);
-                    gridData.persistentPlacedObjectsData.placedObjects.Add(keyvalue);
+                    gridData.persistentPlacedObjectsData.placedObjectCellPositions.Add(cell.occupiedPositions[0]);
+                    gridData.persistentPlacedObjectsData.placedObjectCellDatas.Add(cell.gameObject);
                     cell.SetGrid(gridData);
                 }
             }
@@ -97,7 +103,8 @@ public class ObjectSpawnerGrid : EditorWindow
                         Undo.RegisterCompleteObjectUndo(placementSystem, "GridNew");
                         placementSystem.AssertGridData();
                     }
-                    PlacementSystem.InstantiateCellAtGridPosition(GetGridPosFromMouse(placementLayermask), placementSystem, selGridInt);
+                    Vector3 vec = GetGridPosFromMouse(placementLayermask);
+                    PlacementSystem.InstantiateCellAtGridPosition(vec, placementSystem, selGridInt);
                 }
             }
         }

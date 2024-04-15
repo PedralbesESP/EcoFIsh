@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public abstract class BuildingCell : CellData
+[System.Serializable]
+public class BuildingCell : CellData
 {
     public bool Polluted
     {

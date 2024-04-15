@@ -12,4 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2385539d8cb50354cbc02d2703ce2d44, type: 3}
   m_Name: Persistent Placed Objects Data 1
   m_EditorClassIdentifier: 
-  placedObjects: []
+  placedObjectCellPositions:
+  - {x: 2, y: 3, z: -1}
+  - {x: -2, y: 4, z: -1}
+  - {x: -1, y: 1, z: -1}
+  - {x: -3, y: 1, z: -1}
+  - {x: -2, y: 1, z: -1}
+  - {x: 3, y: 4, z: -1}
+  placedObjectCellDatas:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  hola: 3

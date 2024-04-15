@@ -23,38 +23,8 @@ MonoBehaviour:
     <Size>k__BackingField: {x: 1, y: 1}
     <Prefab>k__BackingField: {fileID: 3328887258248181352, guid: e4b245708152c8341ba370ec79e29792,
       type: 3}
-  - <Name>k__BackingField: BordePlano
-    <ID>k__BackingField: 1
+  - <Name>k__BackingField: Posidonia
+    <ID>k__BackingField: 2
     <Size>k__BackingField: {x: 1, y: 1}
-    <Prefab>k__BackingField: {fileID: 672862738384848025, guid: 993fd789e11861a4bbf80e672a07d30b,
-      type: 3}
-  - <Name>k__BackingField: Rampa
-    <ID>k__BackingField: 1
-    <Size>k__BackingField: {x: 1, y: 1}
-    <Prefab>k__BackingField: {fileID: 3986254060433562930, guid: 6c5566a6a4a2cb54cb69d52348392c3d,
-      type: 3}
-  - <Name>k__BackingField: RocaDobleEsquina
-    <ID>k__BackingField: 1
-    <Size>k__BackingField: {x: 1, y: 1}
-    <Prefab>k__BackingField: {fileID: 2187139479384626337, guid: 548d24ea4c856c6459ba9f3418c4c0d2,
-      type: 3}
-  - <Name>k__BackingField: RocaEsquinaBorde
-    <ID>k__BackingField: 1
-    <Size>k__BackingField: {x: 1, y: 1}
-    <Prefab>k__BackingField: {fileID: 3042611232428257029, guid: e29c751369043ce4ebc4436ef8a0fdfa,
-      type: 3}
-  - <Name>k__BackingField: RocaEsquina1
-    <ID>k__BackingField: 1
-    <Size>k__BackingField: {x: 1, y: 1}
-    <Prefab>k__BackingField: {fileID: 426865067472996239, guid: 9d12b9cab926c3345839a3eff77e2891,
-      type: 3}
-  - <Name>k__BackingField: RocaPlano
-    <ID>k__BackingField: 1
-    <Size>k__BackingField: {x: 1, y: 1}
-    <Prefab>k__BackingField: {fileID: 2426495937542848737, guid: 12aa92a1f3cccff439bd9fe1c32fd0fa,
-      type: 3}
-  - <Name>k__BackingField: RocaLado
-    <ID>k__BackingField: 1
-    <Size>k__BackingField: {x: 1, y: 1}
-    <Prefab>k__BackingField: {fileID: 2792431458820731392, guid: 32cbf5d5079ac8c4986cc888eb604f24,
+    <Prefab>k__BackingField: {fileID: 5917024424032031517, guid: ab280fee81ef3f14695087ff05dcf643,
       type: 3}
